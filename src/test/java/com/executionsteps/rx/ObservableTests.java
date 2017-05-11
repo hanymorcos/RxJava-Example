@@ -1,13 +1,10 @@
 package com.executionsteps.rx;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.schedulers.Schedulers;
