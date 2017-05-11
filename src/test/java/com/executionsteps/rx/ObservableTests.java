@@ -1,9 +1,14 @@
 package com.executionsteps.rx;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.schedulers.Schedulers;
 import rxjava.Helper;
@@ -31,20 +36,31 @@ public class ObservableTests {
 	
 	//######################################
 
+
 	@Test
 	public void test3Feed()
 	{
-		Observable<Double> feed= Observable.create(subscriber -> {
-	    	  while(!subscriber.isCancelled()) {
+		// Created an observer from Observable 
+		List<String> house = Arrays.asList( "lamp","tv","chair","microwave");
+		
+				Observable<String> feed= Observable.create(subscriber -> {
+	    	 for (int i =0; i < house.size();i++)
+	    	 {
+	    		    String item  = house.get(i);
+	    		  	subscriber.onNext(item);
 	    		  	
-	    		  	subscriber.onNext(Math.random());
 	    	        Helper.sleep(10);
 	    	      }
 	    });
 
-       feed.take(3).subscribe((arg0)-> {System.out.println(arg0);},
-        				 		(err)-> {System.err.println(err);});
+				
+	 Observable<String> mover1 =	feed.flatMap((item) -> {System.out.println("mover1 boxed " + item);
+	 													Observable<String> o = Observable.just(item);
+	 													return o;});
        
+	Disposable mover2 = mover1.subscribe((item)->{System.out.println("mover2 put " + item + " in truck " );},
+										 (err)->{System.err.println("Item fell  " + err);},
+										 ()->{System.out.println("No more items");});
        
 	}
 	
@@ -54,6 +70,7 @@ public class ObservableTests {
 	@Test
 	public void test4Threads()
 	{
+		 // Create an Observable from a Callable
 		 Observable.fromCallable(()->{System.out.println("observer =>" + Helper.threadName()); 
 		 							  return 1;})
          .observeOn(Schedulers.newThread())  
@@ -84,7 +101,7 @@ public class ObservableTests {
 	{
 		String[] symArray = {"AAPL","NFLX","Googl","TSLA","AMZN","MSFT"};
 		Observable<Observable<String>> mapped = Observable.fromArray(symArray)
- 			.map((s)->YahooFinance.getPriceOrig(s));
+ 			.map((s)-> YahooFinance.getPriceOrig(s));
 
 		ConnectableObservable<String> merged = Observable.merge(mapped).delay(1,TimeUnit.SECONDS).observeOn(Schedulers.newThread()).publish();
 
