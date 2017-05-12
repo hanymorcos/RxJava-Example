@@ -13,7 +13,14 @@ import rxjava.YahooFinance;
 
 public class ObservableTests {
 
-	// ######################################
+	 /**
+	  *  An observer subscribes to an Observable
+	  *  Observable emits <T> java Generic T -- T can be a list 
+	  *  JavaRX is capturing processes and procedures developers 
+	  *  OnNext is called to emit T item 
+	  *  delay method is used to delay the emit of items by a TimeUnit
+	  */
+	
 	@Test
 	public void testSimple() {
 		Observable<String> lc = Observable.fromArray("one", "two", "three", "four").delay(1, TimeUnit.SECONDS); // provides
@@ -22,7 +29,10 @@ public class ObservableTests {
 		// sleep(1000); // Do you need the sleep?
 	}
 
-	// ######################################
+	/**
+	 * buffer allows item to be queued and returned in a list of the buffer size 
+	 * 
+	 */
 	@Test
 	public void testBuffered() {
 		Observable<String> lc = Observable.fromArray("one", "two", "three", "four");
@@ -30,7 +40,9 @@ public class ObservableTests {
 		// What will happen if you change 4 to 2
 	}
 
-	// ######################################
+	/*
+	 * 
+	 */
 
 	@Test
 	public void testGrouping() {
