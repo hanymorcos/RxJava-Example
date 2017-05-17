@@ -16,13 +16,12 @@ public class ObservableTests {
 	 /**
 	  *  An observer subscribes to an Observable
 	  *  Observable emits <T> java Generic T -- T can be a list 
-	  *  JavaRX is capturing processes and procedures developers 
 	  *  OnNext is called to emit T item 
 	  *  delay method is used to delay the emit of items by a TimeUnit
 	  */
 	
 	@Test
-	public void testSimple() {
+	public void test1Simple() {
 		Observable<String> lc = Observable.fromArray("one", "two", "three", "four").delay(1, TimeUnit.SECONDS); // provides
 																												// delay
 		lc.subscribe((s) -> System.out.println(s));
@@ -34,7 +33,7 @@ public class ObservableTests {
 	 * 
 	 */
 	@Test
-	public void testBuffered() {
+	public void test2Buffered() {
 		Observable<String> lc = Observable.fromArray("one", "two", "three", "four");
 		lc.buffer(4).subscribe((s) -> System.out.println(s));
 		// What will happen if you change 4 to 2
@@ -42,18 +41,22 @@ public class ObservableTests {
 
 	/*
 	 * 
+	 *  flatMap maps an item to a group of items
+	 *  
 	 */
 
 	@Test
-	public void testGrouping() {
+	public void test3Grouping() {
 		Observable.range(1, 10).groupBy(n -> n % 2 == 0)
 				.flatMap(grp -> grp.groupBy(n -> n > 5).flatMap(grp2 -> grp2.toList())).subscribe(System.out::println);
 	}
 
-	// ######################################
+	/*
+	 *  JavaRX is capturing processes and procedures developers 
+	 */
 
 	@Test
-	public void testFeed() {
+	public void test4Feed() {
 		// Created an observer from Observable
 		List<String> house = Arrays.asList("lamp", "tv", "chair", "microwave");
 
@@ -89,7 +92,7 @@ public class ObservableTests {
 	// ######################################
 
 	@Test
-	public void testThreads() {
+	public void test5Threads() {
 		Observable.fromCallable(
 		() -> {
 			System.out.println("observer =>" + Helper.threadName());
@@ -104,7 +107,7 @@ public class ObservableTests {
 
 	// #################
 	@Test
-	public void teststocks() {
+	public void test6stocks() {
 		String[] symArray = { "AAPL", "NFLX", "Googl", "TSLA", "AMZN", "MSFT" };
 		Observable<Observable<String>> mapped = Observable.fromArray(symArray).map((s) -> YahooFinance.getPriceOrig(s));
 
