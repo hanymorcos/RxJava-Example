@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.schedulers.Schedulers;
 import rxjava.Helper;
@@ -14,7 +15,9 @@ import rxjava.YahooFinance;
 public class ObservableTests {
 
 	 /**
-	  *  An observer subscribes to an Observable
+	  *  NoFluffJustStuff topic of Reactive Programming
+	  *  example https://github.com/hanymorcos/RxJava-Example
+	  *  An observer subscribes(implements interface) to an Observable
 	  *  Observable emits <T> java Generic T -- T can be a list 
 	  *  OnNext is called to emit T item 
 	  *  delay method is used to delay the emit of items by a TimeUnit
@@ -23,7 +26,10 @@ public class ObservableTests {
 	@Test
 	public void test1Simple() {
 		Observable<String> lc = Observable.fromArray("one", "two", "three", "four").delay(1, TimeUnit.SECONDS); // provides
-																												// delay
+				
+
+		//Consumer<String> nxt = (s) -> System.out.println(s);
+		
 		lc.subscribe((s) -> System.out.println(s));
 		// sleep(1000); // Do you need the sleep?
 	}
@@ -42,7 +48,7 @@ public class ObservableTests {
 	/*
 	 * 
 	 *  flatMap maps an item to a group of items
-	 *  
+	 *  Group by number type (even/odd) and bigger or less than five
 	 */
 
 	@Test
@@ -53,6 +59,7 @@ public class ObservableTests {
 
 	/*
 	 *  JavaRX is capturing processes and procedures developers 
+	 *  Moving out of a house box and put in a truck
 	 */
 
 	@Test
