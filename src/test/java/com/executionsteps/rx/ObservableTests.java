@@ -72,7 +72,7 @@ public class ObservableTests {
 				emitter.onNext(item);
 				
 			}
-			// emitter.onComplete();
+			 emitter.onComplete();
 		});
 
 		 
