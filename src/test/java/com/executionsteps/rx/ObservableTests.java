@@ -25,13 +25,18 @@ public class ObservableTests {
 	
 	@Test
 	public void test1Simple() {
-		Observable<String> lc = Observable.fromArray("one", "two", "three", "four").delay(1, TimeUnit.SECONDS); // provides
-		//Consumer<String> nxt = (s) -> System.out.println(s);
-		
-		lc.subscribe((s) -> System.out.println(s));
-		// sleep(1000); // Do you need the sleep?
+		Observable<String> lc = Observable.fromArray("one", "two", "three", "four")
+										  .delay(1, TimeUnit.SECONDS); // provides
+		lc.subscribe((s) -> System.out.println(s)); //Consumer<String> nxt = (s) -> System.out.println(s);
+		 Helper.sleep(1000); 
 	}
 
+	
+	
+	
+	
+	
+	
 	/**
 	 * buffer allows item to be queued and returned in a list of the buffer size 
 	 * 
@@ -39,22 +44,50 @@ public class ObservableTests {
 	@Test
 	public void test2Buffered() {
 		Observable<String> lc = Observable.fromArray("one", "two", "three", "four");
-		lc.buffer(4).subscribe((s) -> System.out.println(s));
-		// What will happen if you change 4 to 2
+		lc.buffer(2).subscribe((s) -> System.out.println(s));
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/*
 	 * 
-	 *  flatMap maps an item to a group of items
+	 *  flatMap maps an item to a group of items 
 	 *  Group by number type (even/odd) and bigger or less than five
 	 */
 
 	@Test
 	public void test3Grouping() {
 		Observable.range(1, 10).groupBy(n -> n % 2 == 0)
-				.flatMap(grp -> grp.groupBy(n -> n > 5).flatMap(grp2 -> grp2.toList())).subscribe(System.out::println);
+				.flatMap(grp -> grp.groupBy(n -> n > 5)
+				.flatMap(grp2 -> grp2.toList()))
+				.subscribe(System.out::println);
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/*  Observable.create more granular control of emitting events
 	 *  JavaRX is capturing processes and procedures developers 
 	 *  Moving out of a house box and put in a truck
@@ -66,39 +99,51 @@ public class ObservableTests {
 		// Created an observer from Observable
 		List<String> house = Arrays.asList("lamp", "tv", "chair", "microwave");
 
-		Observable<String> feed = Observable.create(emitter -> {
-			for (int i = 0; i < house.size(); i++) {
-				String item = house.get(i);
-				emitter.onNext(item);
-				
-			}
-			 emitter.onComplete();
-		});
-
-		 
+		Observable<String> feed = Observable.create(emitter -> 
+						{
+							for (int i = 0; i < house.size(); i++) 
+							{
+								String item = house.get(i);
+								emitter.onNext(item);	
+							}
+							 emitter.onComplete();
+						});
 		
-		Observable<String> mover1 = feed.delay(1,TimeUnit.SECONDS).flatMap((item) -> {
-			System.out.println("mover1 boxed " + item);
-			Observable<String> o = Observable.just(item);
-			return o;
-		});
+		Observable<String> mover1 = feed.delay(1,TimeUnit.SECONDS)
+										.flatMap((item) -> 
+											{
+												System.out.println("mover1 boxed " + item);
+												Observable<String> o = Observable.just(item);
+												return o;
+											});
 
 		Disposable mover2 = mover1.subscribe(
-		(item) -> {
-			System.out.println("mover2 put " + item + " in truck ");
-		}, 
-		(err) -> {
-			System.err.println("Item fell  " + err);
-		}, 
-		() -> {
-			System.out.println("No more items");
-		});
+		(item) -> 
+				{
+					System.out.println("mover2 put " + item + " in truck ");
+				}, 
+		(err) -> 
+				{
+					System.err.println("Item fell  " + err);
+				}, 
+		() -> 
+				{
+					System.out.println("No more items");
+				});
 
 
 		 Helper.sleep(2000);
 	}
 
 
+	
+	
+	
+	
+	
+	
+	
+	
 	/*
 	 * Observer.fromCallable create an Observable from a function
 	 * Schedulers.computation or Schedulers.io
@@ -107,17 +152,28 @@ public class ObservableTests {
 	@Test
 	public void test5Threads() {
 		Observable.fromCallable(
-		() -> {
-			System.out.println("observer =>" + Helper.threadName());
-			return 1;
-		}).observeOn(Schedulers.computation())
-		.map((arg0) -> {
-			System.out.println("operator =>" + Helper.threadName());
-			return String.valueOf(arg0);
-		}).observeOn(Schedulers.computation())
+		() -> 
+				{
+					System.out.println("observer =>" + Helper.threadName());
+					return 1;
+				})
+		.observeOn(Schedulers.computation())
+		.map((arg0) -> 
+					{
+						System.out.println("operator =>" + Helper.threadName());
+						return String.valueOf(arg0);
+					})
+		.observeOn(Schedulers.computation())
 		.subscribe((arg0) -> System.out.println("subscribe =>" + Helper.threadName()));
 	}
 
+	
+	
+	
+	
+	
+	
+	
 	/*
 	 * Merging Observable into one stream. For every lookup, we return an Observable and then we merge into one
 	 * ConnectableObservable Hot and Cold Subscription
@@ -133,14 +189,16 @@ public class ObservableTests {
 
 		// ConnectableObservable<String> merged = Observable.merge(mapped).replay();
 
-		merged.subscribe((a) -> {
-			System.out.println("s1 =>" + a);
-		});
+		merged.subscribe((a) -> 
+				{
+					System.out.println("s1 =>" + a);
+				});
 
 		merged.connect();
-		merged.subscribe((a) -> {
-			System.out.println("s2 =>" + a);
-		});
+		merged.subscribe((a) -> 
+			{
+				System.out.println("s2 =>" + a);
+			});
 		Helper.sleep(10000);
 	}
 }
