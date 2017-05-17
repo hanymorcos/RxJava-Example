@@ -26,8 +26,6 @@ public class ObservableTests {
 	@Test
 	public void test1Simple() {
 		Observable<String> lc = Observable.fromArray("one", "two", "three", "four").delay(1, TimeUnit.SECONDS); // provides
-				
-
 		//Consumer<String> nxt = (s) -> System.out.println(s);
 		
 		lc.subscribe((s) -> System.out.println(s));
@@ -57,9 +55,10 @@ public class ObservableTests {
 				.flatMap(grp -> grp.groupBy(n -> n > 5).flatMap(grp2 -> grp2.toList())).subscribe(System.out::println);
 	}
 
-	/*
+	/*  Observable.create more granular control of emitting events
 	 *  JavaRX is capturing processes and procedures developers 
 	 *  Moving out of a house box and put in a truck
+	 *  onComplete to complete emission
 	 */
 
 	@Test
@@ -67,16 +66,18 @@ public class ObservableTests {
 		// Created an observer from Observable
 		List<String> house = Arrays.asList("lamp", "tv", "chair", "microwave");
 
-		Observable<String> feed = Observable.create(subscriber -> {
+		Observable<String> feed = Observable.create(emitter -> {
 			for (int i = 0; i < house.size(); i++) {
 				String item = house.get(i);
-				subscriber.onNext(item);
-
-				Helper.sleep(1000);
+				emitter.onNext(item);
+				
 			}
+			// emitter.onComplete();
 		});
 
-		Observable<String> mover1 = feed.flatMap((item) -> {
+		 
+		
+		Observable<String> mover1 = feed.delay(1,TimeUnit.SECONDS).flatMap((item) -> {
 			System.out.println("mover1 boxed " + item);
 			Observable<String> o = Observable.just(item);
 			return o;
@@ -93,10 +94,15 @@ public class ObservableTests {
 			System.out.println("No more items");
 		});
 
+
+		 Helper.sleep(2000);
 	}
 
 
-	// ######################################
+	/*
+	 * Observer.fromCallable create an Observable from a function
+	 * Schedulers.computation or Schedulers.io
+	 */
 
 	@Test
 	public void test5Threads() {
@@ -112,7 +118,11 @@ public class ObservableTests {
 		.subscribe((arg0) -> System.out.println("subscribe =>" + Helper.threadName()));
 	}
 
-	// #################
+	/*
+	 * Merging Observable into one stream. For every lookup, we return an Observable and then we merge into one
+	 * ConnectableObservable Hot and Cold Subscription
+	 * What does replay do? 
+	 */
 	@Test
 	public void test6stocks() {
 		String[] symArray = { "AAPL", "NFLX", "Googl", "TSLA", "AMZN", "MSFT" };
